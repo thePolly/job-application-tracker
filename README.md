@@ -18,7 +18,7 @@ Backend application for tracking job applications, interview stages and applicat
 - Spring Data JPA
 - PostgreSQL
 - Maven
-- Docker (planned)
+- Docker
 
 ## Project Status
 
@@ -26,14 +26,31 @@ Early development.
 
 ## Planned Features
 
-- REST API endpoints
-- PostgreSQL integration
-- Dockerized database setup
+
 - Application analytics
 - CV version tracking
-- Swagger/OpenAPI documentation
+
 
 ## Run Locally
 
+Start PostgreSQL:
+
+```bash
+docker compose up -d postgres
+```
+
+Run the app:
+
 ```bash
 ./mvnw spring-boot:run
+```
+
+By default the app connects to:
+
+```text
+jdbc:postgresql://localhost:5432/job_application_tracker
+username: postgres
+password: postgres
+```
+
+Override those values with `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, and `SPRING_DATASOURCE_PASSWORD`.
