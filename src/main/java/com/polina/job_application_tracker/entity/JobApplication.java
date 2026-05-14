@@ -1,16 +1,17 @@
 package com.polina.job_application_tracker.entity;
 
 
-import com.polina.job_application_tracker.enums.ApplicationStatus;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,11 +31,16 @@ public class JobApplication {
     @NotBlank
     private String role;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private ApplicationStatus status;
-
-    private LocalDate appliedAt;
-
     private String notes;
+
+    @OneToMany(mappedBy = "jobApplication", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<ApplicationEvent> events = new ArrayList<>();
+
+    public JobApplication(Long id, String company, String role, String notes) {
+        this.id = id;
+        this.company = company;
+        this.role = role;
+        this.notes = notes;
+    }
 }

@@ -1,12 +1,9 @@
 package com.polina.job_application_tracker.repository;
 
 import com.polina.job_application_tracker.entity.JobApplication;
-import com.polina.job_application_tracker.enums.ApplicationStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,20 +14,19 @@ class JobApplicationRepositoryTest {
     private JobApplicationRepository repository;
 
     @Test
-    void savesAndFindsJobApplicationByStatus() {
+    void savesAndFindsJobApplicationById() {
         JobApplication application = new JobApplication(
                 null,
                 "Acme",
                 "Backend Engineer",
-                ApplicationStatus.APPLIED,
-                LocalDate.of(2026, 5, 12),
                 "Initial application"
         );
 
-        repository.save(application);
+        JobApplication savedApplication = repository.save(application);
 
-        assertThat(repository.findByStatus(ApplicationStatus.APPLIED))
-                .singleElement()
+        assertThat(repository.findById(savedApplication.getId()))
+                .isPresent()
+                .get()
                 .satisfies(saved -> {
                     assertThat(saved.getId()).isNotNull();
                     assertThat(saved.getCompany()).isEqualTo("Acme");
