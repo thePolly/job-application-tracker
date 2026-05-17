@@ -4,9 +4,7 @@ Fullstack application for tracking job applications, interview stages, and appli
 
 ## Demo
 
-
-
-
+<img width="720" height="448" alt="Screen Recording 2026-05-17 at 12 09 18-2" src="https://github.com/user-attachments/assets/a190f2f2-7ab9-406d-9de0-e4152c8b28f8" />
 
 
 ## Features
