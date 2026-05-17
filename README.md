@@ -65,13 +65,13 @@ bash git clone <your-repository-url> cd job-application-tracker docker compose u
 ## Application URLs
 
 Frontend:
-text http://localhost:5173 
+http://localhost:5173 
 
 Backend:
-text http://localhost:8080 
+http://localhost:8080 
 
 Swagger UI:
-text http://localhost:8080/swagger-ui.html 
+http://localhost:8080/swagger-ui.html 
 
 ## Example Features
 
