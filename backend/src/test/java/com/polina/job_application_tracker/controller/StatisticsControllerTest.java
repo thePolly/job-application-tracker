@@ -53,4 +53,35 @@ class StatisticsControllerTest {
                 .andExpect(jsonPath("$.offers").value(2))
                 .andExpect(jsonPath("$.rejections").value(31));
     }
+
+    @Test
+    void returnsMonthlyApplicationsForYear() throws Exception {
+        when(eventRepository.countByTypeAndEventDateBetween(
+                ApplicationEventType.APPLIED,
+                LocalDate.of(2026, 1, 1),
+                LocalDate.of(2026, 1, 31)
+        )).thenReturn(3L);
+        when(eventRepository.countByTypeAndEventDateBetween(
+                ApplicationEventType.APPLIED,
+                LocalDate.of(2026, 2, 1),
+                LocalDate.of(2026, 2, 28)
+        )).thenReturn(7L);
+        when(eventRepository.countByTypeAndEventDateBetween(
+                ApplicationEventType.APPLIED,
+                LocalDate.of(2026, 3, 1),
+                LocalDate.of(2026, 3, 31)
+        )).thenReturn(2L);
+
+        mockMvc.perform(get("/statistics/monthly/2026"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(12))
+                .andExpect(jsonPath("$[0].month").value("Jan"))
+                .andExpect(jsonPath("$[0].applications").value(3))
+                .andExpect(jsonPath("$[1].month").value("Feb"))
+                .andExpect(jsonPath("$[1].applications").value(7))
+                .andExpect(jsonPath("$[2].month").value("Mar"))
+                .andExpect(jsonPath("$[2].applications").value(2))
+                .andExpect(jsonPath("$[11].month").value("Dec"))
+                .andExpect(jsonPath("$[11].applications").value(0));
+    }
 }

@@ -63,6 +63,7 @@ function App() {
 function Dashboard() {
   const currentYear = new Date().getFullYear()
   const [statistics, setStatistics] = useState(null)
+  const [monthlyApplications, setMonthlyApplications] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -72,13 +73,17 @@ function Dashboard() {
         setLoading(true)
         setError('')
 
-        const response = await fetch(`${API_URL}/statistics/year/${currentYear}`)
+        const [statisticsResponse, monthlyResponse] = await Promise.all([
+          fetch(`${API_URL}/statistics/year/${currentYear}`),
+          fetch(`${API_URL}/statistics/monthly/${currentYear}`),
+        ])
 
-        if (!response.ok) {
+        if (!statisticsResponse.ok || !monthlyResponse.ok) {
           throw new Error('Could not load statistics')
         }
 
-        setStatistics(await response.json())
+        setStatistics(await statisticsResponse.json())
+        setMonthlyApplications(await monthlyResponse.json())
       } catch (err) {
         setError(err.message)
       } finally {
@@ -95,6 +100,10 @@ function Dashboard() {
     { label: 'Offers', value: statistics?.offers ?? 0 },
     { label: 'Rejections', value: statistics?.rejections ?? 0 },
   ]
+  const maxMonthlyApplications = Math.max(
+    ...monthlyApplications.map((month) => month.applications),
+    1,
+  )
 
   return (
     <section>
@@ -115,6 +124,23 @@ function Dashboard() {
                 <strong>{card.value}</strong>
               </article>
             ))}
+          </div>
+
+          <div className="chart-card monthly-chart-card">
+            <div className="card-heading">
+              <h2>Monthly Applications</h2>
+              <span>{currentYear}</span>
+            </div>
+            <div className="monthly-chart">
+              {monthlyApplications.map((month) => (
+                <MonthlyChartBar
+                  key={month.month}
+                  month={month.month}
+                  applications={month.applications}
+                  max={maxMonthlyApplications}
+                />
+              ))}
+            </div>
           </div>
 
           <div className="chart-card">
@@ -503,6 +529,22 @@ function ChartBar({ label, value, max }) {
         />
       </div>
       <strong>{value}</strong>
+    </div>
+  )
+}
+
+function MonthlyChartBar({ month, applications, max }) {
+  const height = applications === 0 ? 0 : Math.max((applications / max) * 100, 8)
+
+  return (
+    <div className="monthly-chart-item">
+      <div
+        className="monthly-bar"
+        style={{ height: `${height}%` }}
+        title={`${month}: ${applications}`}
+      />
+      <strong>{applications}</strong>
+      <span>{month}</span>
     </div>
   )
 }
